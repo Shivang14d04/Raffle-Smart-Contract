@@ -1,30 +1,30 @@
 // SPDX-License-Identifier: MIT
-pragma solidity  ^0.8.30;
+pragma solidity ^0.8.30;
 
 import {Script} from "forge-std/Script.sol";
 import {Raffle} from "../src/Raffle.sol";
 import {HelperConfig} from "../script/HelperConfig.s.sol";
-import {CreateSubscription , FundSubscription , AddConsumer} from "./Interactions.s.sol";
+import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
 contract DeployRaffle is Script {
-
-    function run() public{
+    function run() public {
         deployContract();
-        
     }
-    function deployContract() public returns (Raffle , HelperConfig){
+
+    function deployContract() public returns (Raffle, HelperConfig) {
         HelperConfig helperConfig = new HelperConfig();
         // loacal-> deploy mocks , get local storage
         // sepolia -> get sepolia config
         HelperConfig.NetworkConfig memory config = helperConfig.getConfig();
 
-        if(config.subscriptionId ==0){
+        if (config.subscriptionId == 0) {
             // create subscription
-            CreateSubscription createSubscription  = new CreateSubscription();
-          (config.subscriptionId , config.vrfCoordinator) =  createSubscription.createSubscription(config.vrfCoordinator , config.account);
+            CreateSubscription createSubscription = new CreateSubscription();
+            (config.subscriptionId, config.vrfCoordinator) =
+                createSubscription.createSubscription(config.vrfCoordinator, config.account);
             //Fund Subscription
             FundSubscription fundSubscription = new FundSubscription();
-            fundSubscription.fundSubscription(config.vrfCoordinator , config.subscriptionId , config.link , config.account);
+            fundSubscription.fundSubscription(config.vrfCoordinator, config.subscriptionId, config.link, config.account);
         }
 
         vm.startBroadcast(config.account);
@@ -38,10 +38,8 @@ contract DeployRaffle is Script {
         );
         vm.stopBroadcast();
 
-        AddConsumer addConsumer  = new AddConsumer();
-        addConsumer.addConsumer(address(raffle) , config.vrfCoordinator , config.subscriptionId , config.account);
-        return (raffle , helperConfig);
-
+        AddConsumer addConsumer = new AddConsumer();
+        addConsumer.addConsumer(address(raffle), config.vrfCoordinator, config.subscriptionId, config.account);
+        return (raffle, helperConfig);
     }
-
 }
