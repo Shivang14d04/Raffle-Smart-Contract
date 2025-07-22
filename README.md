@@ -1,66 +1,136 @@
-## Foundry
+# 🎟️ Raffle Smart Contract
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A decentralized lottery system powered by **Chainlink VRF v2.5**, built using **Foundry**. Participants enter the raffle by paying an ETH entrance fee, and a winner is selected randomly and fairly using Chainlink's provable randomness.
 
-Foundry consists of:
+---
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+## 🚀 Features
 
-## Documentation
+- ✅ Verifiably random winner selection with Chainlink VRF
+- ⏱️ Time-based raffle intervals
+- 🛡️ Secure handling of ETH & randomness
+- 🧪 Comprehensive unit and fuzz tests with Foundry
+- ⚙️ Configurable for local and testnet deployments
 
-https://book.getfoundry.sh/
+---
 
-## Usage
+## 🧱 Technologies
 
-### Build
+- [Solidity](https://docs.soliditylang.org/)
+- [Foundry](https://book.getfoundry.sh/)
+- [Chainlink VRF](https://docs.chain.link/vrf)
+- [Anvil](https://book.getfoundry.sh/anvil/)
+- [Etherscan](https://etherscan.io/)
 
-```shell
-$ forge build
+---
+
+## 📁 Project Structure
+
+```
+Raffle-Smart-Contract/
+├── script/
+│   ├── DeployRaffle.s.sol        # Deployment script
+│   └── HelperConfig.s.sol        # Chainlink + network config
+├── src/
+│   └── Raffle.sol                # Main raffle contract
+├── test/
+│   └── RaffleTest.t.sol          # Unit & fuzz tests
+├── foundry.toml                  # Foundry config
+└── README.md                     # Project documentation
 ```
 
-### Test
+---
 
-```shell
-$ forge test
+## ⚙️ Configuration
+
+Create a `.env` file with:
+
+```bash
+PRIVATE_KEY=your_private_key
+SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/your_project_id
+ETHERSCAN_API_KEY=your_etherscan_key
 ```
 
-### Format
+You can configure network-specific values inside `HelperConfig.s.sol`.
 
-```shell
-$ forge fmt
+---
+
+## Run Locally
+
+### Prerequisites
+
+- [Foundry installed](https://book.getfoundry.sh/getting-started/installation)
+- Git & Node.js installed
+
+### Clone and Setup
+
+```bash
+git clone https://github.com/Shivang14d04/Raffle-Smart-Contract.git
+cd Raffle-Smart-Contract
 ```
 
-### Gas Snapshots
+# Install dependencies
 
-```shell
-$ forge snapshot
+```
+forge install
 ```
 
-### Anvil
+---
 
-```shell
-$ anvil
+## 🧪 Testing
+
+Run unit and fuzz tests with:
+
+```bash
+forge test -vv
 ```
 
-### Deploy
+For forked mainnet testing (e.g., simulate Chainlink behavior):
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
+```bash
+forge test --fork-url $SEPOLIA_RPC_URL -vv
 ```
 
-### Cast
+---
 
-```shell
-$ cast <subcommand>
+## 📦 Deployment
+
+### ➤ Local
+
+```bash
+anvil
+forge script script/DeployRaffle.s.sol --fork-url http://127.0.0.1:8545 --broadcast --legacy
 ```
 
-### Help
+### ➤ Sepolia (Testnet)
 
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+```bash
+forge script script/DeployRaffle.s.sol --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast --verify
 ```
+
+---
+
+## 🎯 Contract Workflow
+
+1. 🎫 Users join the raffle by paying the `entranceFee`
+2. ⏳ After `interval` passes, upkeep is performed
+3. 🔮 Chainlink VRF provides a random number
+4. 🏆 A winner is selected and receives the ETH balance
+5. ♻️ Raffle resets for the next round
+
+---
+
+## 🔒 Security
+
+- Reentrancy-protected
+- Only accepts valid ETH amounts
+- Chainlink-based randomness
+- Fails gracefully when conditions aren't met
+
+---
+
+## 🌐 Useful Links
+
+- [Chainlink VRF Docs](https://docs.chain.link/vrf)
+- [Foundry Book](https://book.getfoundry.sh/)
+- [Solidity Docs](https://docs.soliditylang.org/)
